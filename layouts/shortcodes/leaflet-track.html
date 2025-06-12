@@ -1,6 +1,7 @@
 {{ if .IsNamedParams }}
 
-{{ $trackPath := default "" (.Get "trackPath") }}
+{{ $trackPath := .Get "trackPath" }}
+{{ $pageDir := .Page.RelPermalink }}
 {{ $lineColor := default "#006EFF" (.Get "lineColor") }}
 {{ $lineWeight := default "3" (.Get "lineWeight") }}
 {{ $lineOpacity := default "1" (.Get "lineOpacity") }}
@@ -37,7 +38,7 @@
     trackOpts = {
         mapId: "{{ $mapId }}",
         trackId: "{{ $trackId }}",
-        trackPath: '{{ "gpx" | absURL }}/{{$trackPath}}',
+        trackPath: '{{ printf "%s%s" $pageDir $trackPath }}',
         lineColor: "{{ $lineColor }}",
         lineWeight: "{{ $lineWeight }}",
         lineOpacity: "{{ $lineOpacity }}"
@@ -65,10 +66,12 @@
         iconEndShape: "{{ $markerEndIconShape }}",
         iconEndClasses: "{{ $markerEndIconClasses }}"
     };
-    drawTrack(trackOpts, elevationOpts, markerOpts);
+    setTimeout(function() {
+        drawTrack(trackOpts, elevationOpts, markerOpts);
+    }, 100);
 </script>
 
-<div class="download-track" onclick="downloadFile('{{ "gpx" | absURL }}/{{ $trackPath }}');"><p class="download-track-link">Download</p></div>
+<div class="download-track" onclick="downloadFile('{{ printf "%s%s" $pageDir $trackPath }}');"><p class="download-track-link">Download gpx file</p></div>
 
 {{ else }}
 {{ errorf "Leaflet Hugo Shortcode: impossible using track outside leaflet-map" }}
